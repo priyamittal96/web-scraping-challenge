@@ -16,10 +16,10 @@ def scrape_all():
 
     data = {
      "new_title": news_title,
-     "news_paragraph": news_p,
-     "featured_image": featured_image_url(browser),
+     "news_paragraph": news_paragraph,
+     "featured_image": featured_image(browser),
      "facts": mars_facts(),
-     "hemispheres": hemisphere_image(browser)
+     "hemispheres": hemispheres(browser)
         
     }
     browser.quit()
@@ -39,12 +39,12 @@ def mars_news(browser):
         news_title = title.text.strip()
         print(news_title)
         body = slides[0].find('div', class_= 'article_teaser_body')
-        news_p = body.text.strip()
-        print(news_p)
+        news_paragraph = body.text.strip()
+        print(news_paragraph)
     except: 
         return None, None
     
-    return news_title, news_p
+    return news_title, news_paragraph
 
 
 # JPL Mars Space Images - Featured Image
@@ -52,14 +52,15 @@ def featured_image(browser):
     url = 'https://data-class-jpl-space.s3.amazonaws.com/JPL_Space/index.html'
     browser.visit(url)
     html = browser.html
-    soup = bs(html, 'html.parser'
+    soup = bs(html, 'html.parser')
 
     try:
         images = soup.find_all('img', class_='headerimage fade-in')
         print(images)
         for image in images:
             pic = image['src']
-   
+    except: 
+        return None
 
     featured_image_url = f'https://data-class-jpl-space.s3.amazonaws.com/JPL_Space/{pic}'
     return featured_image_url
@@ -71,7 +72,7 @@ def mars_facts():
     table = pd.read_html(mars_facts_url)
     df = table[0]
     df.columns = ["Facts","Values"]
-    df.set_index(["Facts"])
+    df.set_index(["Facts"], inplace= True)
 
     return df.to_html(classes="table table-striped")
 
@@ -110,6 +111,6 @@ def hemispheres(browser):
     except:
         return None
     
-    reutrn hemisphere_image_urls
+    return hemisphere_image_urls
 
 
